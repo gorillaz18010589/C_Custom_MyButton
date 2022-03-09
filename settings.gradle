@@ -1,0 +1,2 @@
+rootProject.name = "C_Custom_MyButton"
+include ':app'
