@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="MyButton">
+        <attr name="mBgNormalColor" format="reference"/>
+        <attr name="mBgPressedColor" format="reference"/>
+        <attr name="mTextNormalColor" format="reference"/>
+        <attr name="mTextPressedColor" format="reference"/>
+        <attr name="mBgRadius" format="integer"/>
+        <attr name="mDrawableCenter" format="reference"/>
+    </declare-styleable>
+
+</resources>

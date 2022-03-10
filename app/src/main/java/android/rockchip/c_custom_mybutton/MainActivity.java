@@ -5,6 +5,7 @@ import androidx.core.content.ContextCompat;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
     private MyButton myButton;
@@ -12,10 +13,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v("hank","MainActivity -> setContentView前");
         setContentView(R.layout.activity_main);
+        Log.v("hank","MainActivity -> setContentView後");
         myButton = findViewById(R.id.myButton);
+        Log.v("hank","MainActivity -> setContentView後 findViewById");
+        setMyBtnView();
+    }
+
+    private void setMyBtnView() {
         myButton.setTextNormalPressedColor(R.color.white, R.color.black);
         myButton.setRadius(42);
         myButton.setBgNormalPressedColor(R.color.color_C72D2D, R.color.color_80C72D2D);
+//        myButton.setButtonDrawableCenter(50,R.drawable.icon_start);
+//        myButton.setButtonDrawableCenter(R.drawable.icon_start);
+        Log.v("hank","MainActivity -> setContentView後 setMyBtnView後");
     }
 }

@@ -3,19 +3,25 @@ package android.rockchip.c_custom_mybutton;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.Button;
 
 import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
@@ -24,26 +30,69 @@ public class MyButton extends Button {
     public static int[] mNormalState = new int[]{};
     public static int[] mPressState = new int[]{android.R.attr.state_pressed, android.R.attr.state_enabled};
 
-    private int mRadius = 20;    //默認的圓角半徑
+    private int mRadius = 39;    //默認的圓角半徑
 
     private int mBgNormalColor = R.color.teal_200;  //未點按的按鈕背景顏色
     private int mBgPressedColor = R.color.teal_700; //點按後的按鈕背景顏色
     private int mTextNormalColor = R.color.white;   //未點按的文字顏色
     private int mTextPressedColor = R.color.black;  //點按後的文字顏色
 
+    private int mDrawableMarginTextRight = 0;//drawableCenter的Icon,距離右邊文字多少距離
+    private int mDrawableCenterIcon = 0;//drawableCenter的Icon
     private Context mContext;
 
     public MyButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.mContext = context;
+        initStyle(attrs);
         init();
+
         Log.v("hank", "MyButton(Context context, AttributeSet attrs)");
     }
 
     private void init() {
-        setGravity(Gravity.CENTER); //設定文字顯示在按鈕中間
+//        setGravity(Gravity.CENTER); //設定文字顯示在按鈕中間
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+//        setButtonDrawableCenter(0);
+        Log.v("hank", "onDraw()");
+
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    private void initStyle(AttributeSet attrs) {
+        TypedArray typedArray = mContext.obtainStyledAttributes(attrs, R.styleable.MyButton);//取得在屬性設置的屬性陣列
+        int count = typedArray.getIndexCount(); //取得設定的屬性總數
+        for (int i = 0; i < count; i++) {
+            int attr = typedArray.getIndex(i); //取得屬性(int index)
+            switch (attr) {
+                case R.styleable.MyButton_mBgRadius:
+                    mRadius = typedArray.getInteger(attr, 0);
+                    break;
+                case R.styleable.MyButton_mTextNormalColor:
+                    mTextNormalColor = typedArray.getResourceId(attr, mTextNormalColor);
+                    break;
+                case R.styleable.MyButton_mTextPressedColor:
+                    mTextPressedColor = typedArray.getResourceId(attr, mTextPressedColor);
+                    break;
+                case R.styleable.MyButton_mBgNormalColor:
+                    mBgNormalColor = typedArray.getResourceId(attr, mBgNormalColor);
+                    break;
+                case R.styleable.MyButton_mBgPressedColor:
+                    mBgPressedColor = typedArray.getResourceId(attr, mBgPressedColor);
+                    break;
+                case R.styleable.MyButton_mDrawableCenter:
+                    mDrawableCenterIcon = typedArray.getResourceId(attr, mDrawableCenterIcon);
+                    setButtonDrawableCenter(mDrawableMarginTextRight, mDrawableCenterIcon);
+                    break;
+            }
+        }
         buildColorDrawableState();
         buildDrawableState();
+        typedArray.recycle();
     }
 
     /**
@@ -134,12 +183,60 @@ public class MyButton extends Button {
         buildDrawableState();
     }
 
+
+    /**
+     * 將Drawable圖片置中,marginTextRight
+     *
+     * @param marginTextRight 為Drawable距離右邊文字多少距離
+     * @param drawableIcon    DrawableCenter的icon
+     */
+    public void setButtonDrawableCenter(int marginTextRight, @DrawableRes int drawableIcon) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mDrawableMarginTextRight = marginTextRight;
+                Drawable drawable = mContext.getResources().getDrawable(drawableIcon);
+                int width = getMeasuredWidth();
+                int height = getMeasuredHeight();
+
+                int txt_width = (int) (getTextSize() * getText().length());
+                int txt_height = (int) (getLineCount() * getLineHeight());
+
+                int img_width = drawable.getIntrinsicWidth();
+                int img_height = drawable.getIntrinsicHeight();
+                int content_height = txt_height + img_height + mDrawableMarginTextRight;
+                int content_width = txt_width + img_width + mDrawableMarginTextRight;
+                int padding_w = width / 2 - content_width / 2;
+                int padding_h = height / 2 - content_height / 2;
+
+                setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
+                setPadding(padding_w, 0, 0, 0);
+                setCompoundDrawablePadding(-padding_w);
+                Log.v("hank","setButtonDrawableCenter()");
+            }
+        }, 50);
+    }
+
+    /**
+     * 設定DrawableCenter圖案
+     *
+     * @param drawableIcon DrawableCenter的icon
+     */
+    public void setButtonDrawableCenter(@DrawableRes int drawableIcon) {
+        mDrawableCenterIcon = drawableIcon;
+        setButtonDrawableCenter(mDrawableMarginTextRight, mDrawableCenterIcon);
+    }
+
+
     /**
      * 將R.color.xx => @ColorRes
+     *
      * @param color R
      * @return
      */
     private int getResColor(@ColorRes int color) {
         return ContextCompat.getColor(mContext, color);
     }
+
+
 }

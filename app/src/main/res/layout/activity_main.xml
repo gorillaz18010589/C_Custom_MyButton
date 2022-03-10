@@ -8,13 +8,20 @@
 
    <android.rockchip.c_custom_mybutton.MyButton
        android:id="@+id/myButton"
-       android:layout_width="238dp"
-       android:layout_height="80dp"
+       android:layout_width="208dp"
+       android:layout_height="83dp"
+       android:text="START"
+       app:layout_constraintBottom_toBottomOf="parent"
        app:layout_constraintLeft_toLeftOf="parent"
        app:layout_constraintRight_toRightOf="parent"
        app:layout_constraintTop_toTopOf="parent"
-       app:layout_constraintBottom_toBottomOf="parent"
-       android:text="測試"
+       app:mBgNormalColor="@color/color_C72D2D"
+       app:mBgPressedColor="@color/color_80C72D2D"
+       app:mBgRadius="39"
+       app:mTextNormalColor="@color/white"
+       app:mTextPressedColor="@color/black"
+       tools:ignore="MissingPrefix"
+       app:mDrawableCenter="@drawable/icon_start"
        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
